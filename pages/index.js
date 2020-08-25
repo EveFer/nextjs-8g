@@ -74,6 +74,7 @@ export default function Home () {
           </Link>
           <button type='submit'>send</button>
         </form>
+        <h1>Nuevo cambio</h1>
       </Layout>
     </>
   )
