@@ -1,65 +1,80 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 
-export default function Home() {
+import { Form, Input, Button, Checkbox } from 'antd'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import Layout from '../components/Layout'
+
+const layout = {
+  labelCol: {
+    span: 8
+  },
+  wrapperCol: {
+    span: 16
+  }
+}
+const tailLayout = {
+  wrapperCol: {
+    offset: 8,
+    span: 16
+  }
+}
+export default function Home () {
+  // const onFinish = values => {
+  //   console.log('Success:', values)
+  // }
+
+  // const onFinishFailed = errorInfo => {
+  //   console.log('Failed:', errorInfo)
+  // }
+
+  const router = useRouter()
+
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email('El email no es valido').required('Campo Requerido'),
+      password: Yup.string().min(8, 'El password debe ...').required('Campo Requerido')
+    }),
+    onSubmit: async (value) => {
+      console.log(value)
+      // request
+      router.push({
+        pathname: '/dashboard',
+        query: { name: 'Vercel' }
+      })
+    }
+  })
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <Layout>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <form
+          onSubmit={formik.handleSubmit}
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+          <input type='email' name='email' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} />
+          {
+            formik.errors.email && formik.touched.email ? (
+              <p>{formik.errors.email}</p>
+            ) : null
+          }
+          <input name='password' type='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} />
+          {
+            formik.errors.password && formik.touched.password ? (
+              <p>{formik.errors.password}</p>
+            ) : null
+          }
+          <Link href='/dashboard'>
+            <a>Redired</a>
+          </Link>
+          <button type='submit'>send</button>
+        </form>
+      </Layout>
+    </>
   )
 }
